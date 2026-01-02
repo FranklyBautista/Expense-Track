@@ -9,6 +9,7 @@ import { requireAuth, AuthRequest } from "./middlewares/auth";
 
 import { hashear_password } from "./utils/hash";
 import { signAccesToken } from "./utils/jwt";
+import { connect } from "node:http2";
 
 const app = express();
 
@@ -142,7 +143,49 @@ app.post("/auth/logout", (req, res) => {
   res.status(204).send();
 });
 
-const PORT = Number(process.env.PORT);
+//ENDPOINT DE DATOS EXPENSES
+
+//Metodo para obtener los datos
+app.get("/expenses/get", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const gastos = await prisma.expense.findMany({
+      where: { userId: req.userId },
+    });
+    if (gastos.length == 0)
+      return res.json({ message: "No hay gastos registrados aun" });
+
+    res.status(200).json({ message: "Datos obtenidos exitosamentes", gastos });
+  } catch (err: any) {
+    return res.json({ error: "No se ha podido encontrar los expenses" });
+  }
+});
+
+//Metodo para subir los gastos
+app.post("/expenses/add", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { title, amount, info, category } = req.body;
+
+    if (!title || !amount) {
+      res.json({ message: "titulo y monto son campos obligatorios" });
+    }
+
+    const newExpense = await prisma.expense.create({
+      data: {
+        title,
+        amount: Number(amount),
+        info,
+        category,
+        user: {
+          connect: { id: req.userId },
+        },
+      },
+    });
+
+    return res.status(201).json({ message: "Creado exitosamente", newExpense });
+  } catch (err: any) {}
+});
+
+const PORT = Number(process.env.PORT) || 4000;
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en ${PORT}`);

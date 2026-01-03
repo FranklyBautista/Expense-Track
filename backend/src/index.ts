@@ -149,8 +149,33 @@ app.post("/auth/logout", (req, res) => {
 //Metodo para obtener los datos
 app.get("/expenses/get", requireAuth, async (req: AuthRequest, res) => {
   try {
+    const { category, limit, from, to, min_amount, max_amount, q } = req.query;
+
+    const where: any = { userId: req.userId };
+
+    if (category && typeof category === "string") {
+      where.category = category;
+    }
+
+    if (from || to) {
+      where.createdAt = {};
+      if (from) where.createdAt.gte = new Date(from as string);
+      if (to) where.createdAt.lte = new Date(to as string);
+    }
+
+    if (min_amount || max_amount) {
+      where.amount = {};
+      if (min_amount) where.amount.gte = Number(min_amount);
+      if (max_amount) where.amount.lte = Number(max_amount);
+    }
+
+    if (q && typeof q === "string") {
+      where.title = { contains: q };
+    }
+
     const gastos = await prisma.expense.findMany({
-      where: { userId: req.userId },
+      where,
+      take: limit ? Number(limit) : undefined,
     });
     if (gastos.length == 0)
       return res.json({ message: "No hay gastos registrados aun" });

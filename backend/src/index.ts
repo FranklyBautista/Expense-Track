@@ -10,6 +10,7 @@ import { requireAuth, AuthRequest } from "./middlewares/auth";
 import { hashear_password } from "./utils/hash";
 import { signAccesToken } from "./utils/jwt";
 import { connect } from "node:http2";
+import { json } from "node:stream/consumers";
 
 const app = express();
 
@@ -183,6 +184,103 @@ app.post("/expenses/add", requireAuth, async (req: AuthRequest, res) => {
 
     return res.status(201).json({ message: "Creado exitosamente", newExpense });
   } catch (err: any) {}
+});
+
+//Metodo que elimina un gasto segun su id que viene en los parametros de la URL
+app.delete("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletes = await prisma.expense.deleteMany({
+      where: { id, userId: req.userId },
+    });
+
+    if (deletes.count == 0)
+      return res.status(404).json({ message: "Gasto no encontrado" });
+
+    res.status(201).json({ mesage: "Gasto eliminado exitosamente" });
+  } catch (err: any) {
+    return res.status(500).json({ error: "No se pudo elimina el gasto" });
+  }
+});
+
+//Metodo que modifica un gasto en especifico segun su id proveniente de los parametros
+app.patch("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
+  const { id } = req.params;
+  const { title, amount, category } = req.body as {
+    title?: String;
+    amount?: number;
+    category?: String | null;
+  };
+
+  // 1) Verificar que el expense sea de usuario
+  const existingExpense = await prisma.expense.findFirst({
+    where: { id, userId: req.userId },
+    select: { id: true },
+  });
+
+  if (!existingExpense)
+    return res.status(404).json({ message: "Mp se ha encontrado el gasto" });
+
+  const dataToUpdate: any = {};
+
+  if (title !== undefined) {
+    if (typeof title !== "string" || !title.trim()) {
+      return res
+        .status(400)
+        .json({ error: "title must be a non-empty string" });
+    }
+    dataToUpdate.title = title.trim();
+  }
+
+  if (amount !== undefined) {
+    if (typeof amount !== "number" || Number.isNaN(amount) || amount <= 0) {
+      return res
+        .status(400)
+        .json({ error: "amount must be a positive number" });
+    }
+    dataToUpdate.amount = amount;
+  }
+
+  if (category !== undefined) {
+    if (category === null || category === "") dataToUpdate.category = null;
+    else {
+      if (typeof category !== "string") {
+        return res.status(400).json({ error: "category must be a string" });
+      }
+      dataToUpdate.category = category.trim();
+    }
+  }
+
+  if (Object.keys(dataToUpdate).length === 0) {
+    return res.status(400).json({ error: "no fields to update" });
+  }
+
+  const updated = await prisma.expense.update({
+    where: { id },
+    data: dataToUpdate,
+  });
+
+  res.json(updated);
+});
+
+//Metodo que obtiene un gasto de manera individual
+
+app.get("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+
+    const specificExpense = await prisma.expense.findFirst({
+      where: { id, userId: req.userId },
+    });
+
+    if (!specificExpense)
+      return res.status(404).json({ message: "No se ha encontrado el gasto" });
+
+    return res.status(200).json({ specificExpense });
+  } catch (err: any) {
+    return res.status(500).json({ error: "Error buscando el gasto" });
+  }
 });
 
 const PORT = Number(process.env.PORT) || 4000;

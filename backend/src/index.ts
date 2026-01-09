@@ -4,13 +4,22 @@ import cors from "cors";
 import prisma from "./db";
 import bycrypt from "bcrypt";
 import cookieParser from "cookie-parser";
-import { error, log } from "node:console";
 import { requireAuth, AuthRequest } from "./middlewares/auth";
+import { errorHandler } from "./middlewares/errorHandler";
+import { asyncHandler } from "./middlewares/asyncHandler";
 
 import { hashear_password } from "./utils/hash";
 import { signAccesToken } from "./utils/jwt";
-import { connect } from "node:http2";
-import { json } from "node:stream/consumers";
+import {
+  create_expense_schema,
+  expenses_query_schema,
+  create_modify_schema,
+} from "./schemas/expense";
+
+import { login_user_schema, register_user_schema } from "./schemas/user";
+import { ZodError } from "zod";
+import { title } from "node:process";
+import { error } from "node:console";
 
 const app = express();
 
@@ -29,18 +38,16 @@ app.get("/health", (req, res) => {
   res.send("HELLO WORLD");
 });
 
-app.post("/auth/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+app.post(
+  "/auth/register",
+  asyncHandler(async (req, res) => {
+    const dataZod = register_user_schema.parse(req.body);
 
     //Valido que los datos esten completos
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Falta datos para el registro" });
-    }
 
     //Si no faltan datos procedo a ver si el usuario ya existe
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: dataZod.email },
     });
     if (existingUser) {
       return res.status(400).json({ error: "El usuario ya existe" });
@@ -48,29 +55,27 @@ app.post("/auth/register", async (req, res) => {
     //Si el usuario no existe, procedo a crearlo e implementarlo dentro de la base de datos
 
     //Hasheo la password antes de guardarla
-    const hashedPassword = await hashear_password(password);
+    const hashedPassword = await hashear_password(dataZod.pasword);
 
     const newUser = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+      data: {
+        name: dataZod.name,
+        email: dataZod.email,
+        password: hashedPassword,
+      },
       select: { id: true, name: true, email: true, createdAt: true },
     });
-
     res
       .status(201)
       .json({ message: "Usuario creado correctamente", user: newUser });
-  } catch (err: any) {
-    console.error("REGISTER ERROR:", err);
-    return res.status(500).json({
-      error: "Error interno al registrar",
-      details: err?.message ?? err,
-      code: err?.code,
-    });
-  }
-});
+  })
+);
 
-app.post("/auth/login", async (req, res) => {
-  //Login de usuario dentro de la base de datos
-  try {
+app.post(
+  "/auth/login",
+  asyncHandler(async (req, res) => {
+    //Login de usuario dentro de la base de datos
+
     const { email, password } = req.body;
 
     //En caso de que falten datos
@@ -115,13 +120,13 @@ app.post("/auth/login", async (req, res) => {
       email: existingUser.email,
       name: existingUser.name,
     });
-  } catch (err: any) {
-    return res.status(500).json({ message: "Error al buscar el usuario" });
-  }
-});
+  })
+);
 
-app.get("/auth/me", requireAuth, async (req: AuthRequest, res) => {
-  try {
+app.get(
+  "/auth/me",
+  requireAuth,
+  asyncHandler(async (req: AuthRequest, res) => {
     const user = await prisma.user.findUnique({
       where: { id: req.userId! },
       select: { id: true, email: true, name: true, createdAt: true },
@@ -130,10 +135,8 @@ app.get("/auth/me", requireAuth, async (req: AuthRequest, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     res.json(user);
-  } catch (err: any) {
-    res.status(500).json({ error: "server error" });
-  }
-});
+  })
+);
 
 app.post("/auth/logout", (req, res) => {
   res.clearCookie("token", {
@@ -147,68 +150,56 @@ app.post("/auth/logout", (req, res) => {
 //ENDPOINT DE DATOS EXPENSES
 
 //Metodo para obtener los datos
-app.get("/expenses/get", requireAuth, async (req: AuthRequest, res) => {
-  try {
-    const { category, limit, from, to, min_amount, max_amount, q } = req.query;
-
-    const where: any = { userId: req.userId };
-
-    if (category && typeof category === "string") {
-      where.category = category;
-    }
-
-    if (from || to) {
-      where.createdAt = {};
-      if (from) where.createdAt.gte = new Date(from as string);
-      if (to) where.createdAt.lte = new Date(to as string);
-    }
-
-    if (min_amount || max_amount) {
-      where.amount = {};
-      if (min_amount) where.amount.gte = Number(min_amount);
-      if (max_amount) where.amount.lte = Number(max_amount);
-    }
-
-    if (q && typeof q === "string") {
-      where.title = { contains: q };
-    }
+app.get(
+  "/expenses/get",
+  requireAuth,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const dataFilterZod = expenses_query_schema.parse(req.query);
 
     const gastos = await prisma.expense.findMany({
-      where,
-      take: limit ? Number(limit) : undefined,
+      where: { userId: req.userId, ...dataFilterZod.where },
+
+      take: dataFilterZod.limit ? dataFilterZod.limit : undefined,
     });
     if (gastos.length == 0)
       return res.json({ message: "No hay gastos registrados aun" });
 
     res.status(200).json({ message: "Datos obtenidos exitosamentes", gastos });
-  } catch (err: any) {
-    return res.json({ error: "No se ha podido encontrar los expenses" });
-  }
-});
+  })
+);
 
 //Metodo para subir los gastos
 app.post("/expenses/add", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const { title, amount, info, category } = req.body;
-
-    if (!title || !amount) {
-      res.json({ message: "titulo y monto son campos obligatorios" });
-    }
+    const dataZod = create_expense_schema.parse(req.body);
 
     const newExpense = await prisma.expense.create({
       data: {
-        title,
-        amount: Number(amount),
-        info,
-        category,
+        title: dataZod.title,
+        amount: dataZod.amount,
+        info: dataZod.info,
+        category: dataZod.category,
         user: {
           connect: { id: req.userId },
         },
       },
     });
 
-    return res.status(201).json({ message: "Creado exitosamente", newExpense });
-  } catch (err: any) {}
+    res.status(201).json({ message: "Expense Created", newExpense });
+  } catch (err: any) {
+    if (err instanceof ZodError) {
+      return res.status(400).json({
+        error: "Validation error",
+        details: err.issues.map((i) => ({
+          path: i.path.join("."),
+          message: i.message,
+        })),
+      });
+    }
+
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
 });
 
 //Metodo que elimina un gasto segun su id que viene en los parametros de la URL
@@ -231,62 +222,44 @@ app.delete("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
 
 //Metodo que modifica un gasto en especifico segun su id proveniente de los parametros
 app.patch("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
-  const { id } = req.params;
-  const { title, amount, category } = req.body as {
-    title?: String;
-    amount?: number;
-    category?: String | null;
-  };
+  try {
+    const { id } = req.params;
+    const dataZod = create_modify_schema.parse(req.body);
 
-  // 1) Verificar que el expense sea de usuario
-  const existingExpense = await prisma.expense.findFirst({
-    where: { id, userId: req.userId },
-    select: { id: true },
-  });
+    // 1) Verificar que el expense sea de usuario
+    const existingExpense = await prisma.expense.findFirst({
+      where: { id, userId: req.userId },
+      select: { id: true },
+    });
 
-  if (!existingExpense)
-    return res.status(404).json({ message: "Mp se ha encontrado el gasto" });
+    if (!existingExpense)
+      return res.status(404).json({ message: "No se ha encontrado el gasto" });
 
-  const dataToUpdate: any = {};
+    const updated = await prisma.expense.update({
+      where: { id },
+      data: {
+        title: dataZod.title,
+        amount: dataZod.amount,
+        category: dataZod.category,
+        info: dataZod.info,
+      },
+    });
 
-  if (title !== undefined) {
-    if (typeof title !== "string" || !title.trim()) {
-      return res
-        .status(400)
-        .json({ error: "title must be a non-empty string" });
+    res.json(updated);
+  } catch (err: any) {
+    if (err instanceof ZodError) {
+      return res.status(400).json({
+        error: "Validation error",
+        details: err.issues.map((i) => ({
+          path: i.path.join("."),
+          message: i.message,
+        })),
+      });
     }
-    dataToUpdate.title = title.trim();
+
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
   }
-
-  if (amount !== undefined) {
-    if (typeof amount !== "number" || Number.isNaN(amount) || amount <= 0) {
-      return res
-        .status(400)
-        .json({ error: "amount must be a positive number" });
-    }
-    dataToUpdate.amount = amount;
-  }
-
-  if (category !== undefined) {
-    if (category === null || category === "") dataToUpdate.category = null;
-    else {
-      if (typeof category !== "string") {
-        return res.status(400).json({ error: "category must be a string" });
-      }
-      dataToUpdate.category = category.trim();
-    }
-  }
-
-  if (Object.keys(dataToUpdate).length === 0) {
-    return res.status(400).json({ error: "no fields to update" });
-  }
-
-  const updated = await prisma.expense.update({
-    where: { id },
-    data: dataToUpdate,
-  });
-
-  res.json(updated);
 });
 
 //Metodo que obtiene un gasto de manera individual
@@ -307,6 +280,8 @@ app.get("/expenses/:id", requireAuth, async (req: AuthRequest, res) => {
     return res.status(500).json({ error: "Error buscando el gasto" });
   }
 });
+
+app.use(errorHandler);
 
 const PORT = Number(process.env.PORT) || 4000;
 

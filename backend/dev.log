@@ -1,0 +1,130 @@
+
+> backend@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 11:54:28 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+PrismaClientInitializationError: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+    at new t (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:259:15)
+    at Object.<anonymous> (/home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts:3:16)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1761:14)
+    at Module._compile (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-3711284657680213.js:69:33)
+    at node:internal/modules/cjs/loader:1893:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-3711284657680213.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-3711284657680213.js:71:20)
+    at Object.nodeDevHook [as .ts] (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/ts-node-dev/lib/hook.js:63:13)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+[ERROR] 11:54:29 PrismaClientInitializationError: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+[INFO] 12:03:19 Restarting: /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts has been modified
+Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js:2:6)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1761:14)
+[ERROR] 12:03:19 Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+[INFO] 12:07:45 Restarting: /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts has been modified
+Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js:2:6)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1761:14)
+[ERROR] 12:07:46 Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+[INFO] 12:09:07 Restarting: /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts has been modified
+Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js:2:6)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1761:14)
+[ERROR] 12:09:07 Error: Cannot find module '.prisma/client/default'
+Require stack:
+- /home/frankly-bautista/Documentos/Expense-Track/backend/node_modules/@prisma/client/default.js
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/controllers/auth.controller.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/routes/auth.routes.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/app.ts
+- /home/frankly-bautista/Documentos/Expense-Track/backend/src/index.ts
+[INFO] 12:36:22 Restarting: /home/frankly-bautista/Documentos/Expense-Track/backend/src/db.ts has been modified
+Servidor corriendo en 3000

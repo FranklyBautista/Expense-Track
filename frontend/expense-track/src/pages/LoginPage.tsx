@@ -31,7 +31,7 @@ export default function LoginPage() {
                 throw new Error(data.error || data.message || "Login Failed")
             }
 
-            navigate("/register");
+            
             alert("Login Successful")
 
         }catch(err:any){

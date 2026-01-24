@@ -14,6 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useAuthContext } from "@/context/auth.context"
+import { ModeToggle } from "@/components/mode-toggle"
 
 
 
@@ -57,6 +58,7 @@ export default function DashboardPage() {
           </div>*/}
           <div>
             <h2>hola {user?.name}</h2>
+            <ModeToggle />
           </div>
        { /*  <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />*/}
         </div>

@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-const API_URL =  import.meta.env.VITE_API_URL || "VITE_API_URL=http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
@@ -110,7 +110,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/Login">Sign in</a>
+                  Already have an account? <a href="/login">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -3,11 +3,13 @@ import { LoginForm } from "@/components/login-form"
 import { useState } from "react";
 import {useNavigate } from "react-router-dom";
 import React from "react";
+import { useAuthContext } from "@/context/auth.context";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"; 
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { setUser } = useAuthContext();
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
 
@@ -31,12 +33,20 @@ export default function LoginPage() {
                 throw new Error(data.error || data.message || "Login Failed")
             }
 
-            
-            alert("Login Successful")
+            // Actualizar el contexto con el usuario (el backend devuelve { id, email, name })
+            if (data.id && data.email && data.name) {
+                setUser({
+                    id: data.id,
+                    email: data.email,
+                    name: data.name
+                });
+            }
+
+            navigate("/dashboard")
 
         }catch(err:any){
             alert(err.message || "Error al iniciar sesión");
-            console.log("API_URL",API_URL)
+            console.error("Login error:", err);
         }
     }
 

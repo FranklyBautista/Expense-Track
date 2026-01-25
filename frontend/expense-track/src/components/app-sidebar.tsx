@@ -27,6 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useAuthContext } from "@/context/auth.context"
 
 const data = {
   user: {
@@ -153,6 +154,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const {user} = useAuthContext()
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -164,8 +167,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Holiwis</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-medium">{user?.name}</span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </a>
             </SidebarMenuButton>

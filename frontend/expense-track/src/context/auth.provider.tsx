@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error(data.error || data.message || "Fetch Failed")
         }
 
-        setUser(data)
+        setUser(data)        
       } catch (err: any) {
         console.error(err.message || "Error fetching data")
         setUser(null)

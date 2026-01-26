@@ -17,6 +17,7 @@ import { useAuthContext } from "@/context/auth.context"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useEffect, useState } from "react"
 import type { ExpenseType } from "@/types/auth.types"
+import { ModalAddPage } from "./ModalAddPage"
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -86,8 +87,10 @@ export default function DashboardPage() {
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>*/}
           <div>
+
             <h2>hola {user?.name}</h2>
             <ModeToggle />
+            <ModalAddPage/>
             <div>
               <p>DASHBOARD CONTENT GOES HERE</p>
               {expenses.map((expense)=>{
@@ -98,7 +101,6 @@ export default function DashboardPage() {
               })}
             </div>
           </div>
-          { /*  <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />*/}
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -4,6 +4,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ThemeProvider } from "./components/theme-provider";
+import { ModalAddPage } from "./pages/ModalAddPage";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/add" element={<ModalAddPage/>}/>
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
     </ThemeProvider>

@@ -5,6 +5,7 @@ type AuthContextType = {
     user: UserType | null;
     setUser: (user: UserType | null) => void;
     loading: boolean;
+    logOut:()=> Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextType|null>(null)

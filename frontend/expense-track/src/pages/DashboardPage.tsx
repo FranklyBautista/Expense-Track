@@ -44,7 +44,6 @@ export default function DashboardPage() {
         if (!resData.ok) {
           throw new Error(data.error || data.message || "Fetch Failed")
         }
-        console.log(data)
         setExpenses(data.gastos)
         
       } catch (err: any) {

@@ -29,24 +29,28 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export function TableExpenses({expensesData}: {expensesData:ExpenseType[]}) {
+export function TableExpenses({expensesData, onRefresh}: {expensesData:ExpenseType[], onRefresh?: () => void | Promise<void>}) {
 
   const [openEdit, setOpenEdit] = useState(false)
   const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(null)
+  let suma:number=0;
+  expensesData.forEach((expense) => {
+    suma += Number(expense.amount);
+  });
 
 
 
   const handleDelete = async (id: string) => {
     try{
-      await fetch(`${API_URL}/expenses/${id}`,{
+      const res = await fetch(`${API_URL}/expenses/${id}`,{
         method:"DELETE",
         credentials:"include"
       })
-      
+      if (!res.ok) throw new Error("Delete failed")
+      if (onRefresh) await onRefresh()
     }catch(err){
       console.error("Failed to delete expense:", err)
     }
-    // TODO: Implementar lógica de eliminación
   }
   return (
     <Table>
@@ -91,7 +95,7 @@ export function TableExpenses({expensesData}: {expensesData:ExpenseType[]}) {
       <TableFooter>
         <TableRow>
           <TableCell colSpan={4}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">{suma.toFixed(2)}</TableCell>
         </TableRow>
       </TableFooter>
       {/* Edit dialog */}
@@ -99,7 +103,7 @@ export function TableExpenses({expensesData}: {expensesData:ExpenseType[]}) {
         <AlertDialogContent className="p-0 w-fit max-w-md border-none">
           <AlertDialogTitle className="sr-only">Edit Expense</AlertDialogTitle>
           <AlertDialogDescription className="sr-only">Edit an existing expense</AlertDialogDescription>
-          <EditPage onClose={() => setOpenEdit(false)} id={selectedExpenseId} />
+          <EditPage onClose={() => setOpenEdit(false)} id={selectedExpenseId} onSaved={onRefresh} />
         </AlertDialogContent>
       </AlertDialog>
     </Table>

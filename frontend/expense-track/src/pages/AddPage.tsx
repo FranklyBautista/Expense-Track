@@ -18,6 +18,7 @@ const API_URL = import.meta.env.VITE_API_URL
 
 interface AddPageProps {
     onClose?: () => void;
+    onSaved?: () => void | Promise<void>;
 }
 
 const styles = `
@@ -32,7 +33,7 @@ const styles = `
   }
 `
 
-export function AddPage({ onClose }: AddPageProps) {
+export function AddPage({ onClose, onSaved }: AddPageProps) {
     const [title, setTitle] = React.useState("");
     const [amount, setAmount] = React.useState<number | string>("");
     const [category, setCategory] = React.useState("");
@@ -57,7 +58,8 @@ export function AddPage({ onClose }: AddPageProps) {
             }
 
             alert("Gasto agregado exitosamente")
-
+            if (onSaved) await onSaved()
+            if (onClose) onClose()
 
         } catch (err: any) {
             alert(err.message || "Error al agregar el gasto")

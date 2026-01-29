@@ -9,10 +9,19 @@ import { Button } from "@/components/ui/button"
 import { AddPage } from "./AddPage"
 import React from "react"
 
-export function ModalAddPage() {
+interface ModalAddPageProps {
+  onSaved?: () => void | Promise<void>;
+}
+
+export function ModalAddPage({ onSaved }: ModalAddPageProps) {
   const [open, setOpen] = React.useState(false)
 
   const handleClose = () => setOpen(false)
+
+  const handleSaved = async () => {
+    setOpen(false)
+    if (onSaved) await onSaved()
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -24,7 +33,7 @@ export function ModalAddPage() {
         <AlertDialogDescription className="sr-only">
           Add a new expense to your tracker
         </AlertDialogDescription>
-        <AddPage onClose={handleClose}/>
+        <AddPage onClose={handleClose} onSaved={handleSaved} />
       </AlertDialogContent>
     </AlertDialog>
   )

@@ -54,6 +54,24 @@ export default function DashboardPage() {
     getData();
   }, [])
 
+  async function refreshExpenses() {
+    try {
+      const resData = await fetch(`${API_URL}/expenses/get`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await resData.json().catch(() => ({}))
+
+      if (!resData.ok) {
+        throw new Error(data.error || data.message || "Fetch Failed")
+      }
+      setExpenses(data.gastos)
+    } catch (err: any) {
+      console.error("Refresh failed:", err)
+    }
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -85,9 +103,9 @@ export default function DashboardPage() {
 
             <h2>hola {user?.name}</h2>
             <ModeToggle />
-            <ModalAddPage/>
+            <ModalAddPage onSaved={refreshExpenses} />
             <div>
-              <TableExpenses expensesData={expenses}/> 
+              <TableExpenses expensesData={expenses} onRefresh={refreshExpenses} /> 
             </div>
           </div>
         </div>

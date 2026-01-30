@@ -42,7 +42,7 @@ export function AddPage({ onClose, onSaved }: AddPageProps) {
     async function addExpense() {
         try {
             console.log(title, amount, category, info);
-            const res = await fetch(`${API_URL}/expenses/create`, {
+            const res = await fetch(`${API_URL}/expenses`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

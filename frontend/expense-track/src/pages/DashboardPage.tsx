@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
     async function getData() {
       try {
-        const resData = await fetch(`${API_URL}/expenses/get`, {
+        const resData = await fetch(`${API_URL}/expenses`, {
           method: "GET",
           credentials: "include",
         });
@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   async function refreshExpenses() {
     try {
-      const resData = await fetch(`${API_URL}/expenses/get`, {
+      const resData = await fetch(`${API_URL}/expenses/`, {
         method: "GET",
         credentials: "include",
       });

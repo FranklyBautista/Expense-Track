@@ -11,9 +11,9 @@ import {
 
 const router = Router();
 
-router.get("/get", requireAuth, asyncHandler(list));
+router.get("/", requireAuth, asyncHandler(list));
 router.get("/:id", requireAuth, asyncHandler(getOne));
-router.post("/create", requireAuth, asyncHandler(create));
+router.post("/", requireAuth, asyncHandler(create));
 router.delete("/:id", requireAuth, asyncHandler(remove));
 router.patch("/:id", requireAuth, asyncHandler(update));
 

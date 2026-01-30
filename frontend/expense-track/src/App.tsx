@@ -5,6 +5,24 @@ import DashboardPage from "./pages/DashboardPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ThemeProvider } from "./components/theme-provider";
 import { ModalAddPage } from "./pages/ModalAddPage";
+import { useAuthContext } from "@/context/auth.context";
+
+
+function InitialRoute() {
+  const { user, loading } = useAuthContext();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <Navigate to={user ? "/dashboard" : "/login"} replace />;
+}
 
 export default function App() {
   return (
@@ -21,7 +39,7 @@ export default function App() {
         }
       />
       <Route path="/add" element={<ModalAddPage/>}/>
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<InitialRoute />} />
     </Routes>
     </ThemeProvider>
     

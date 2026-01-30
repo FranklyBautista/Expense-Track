@@ -108,9 +108,9 @@ Backend: http://localhost:3000
 - `POST /auth/logout`
 
 ### Expenses (protegidas)
-- `GET /expenses/get`
+- `GET /expenses`
 - `GET /expenses/:id`
-- `POST /expenses/create`
+- `POST /expenses`
 - `PATCH /expenses/:id`
 - `DELETE /expenses/:id`
 

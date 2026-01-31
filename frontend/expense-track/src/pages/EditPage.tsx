@@ -53,8 +53,8 @@ export function EditPage({ onClose, id, onSaved }: AddPageProps) {
             try {
                 const res = await fetch(`${API_URL}/expenses/${id}`, { credentials: "include", method:"GET" });
                 const data = await res.json().catch(() => ({}));
-                if (res.ok && !cancelled && data.specificExpense) {
-                    const expense = data.specificExpense;
+                if (res.ok && !cancelled && data.data) {
+                    const expense = data.data;
                     setTitle(expense.title || "");
                     setAmount(expense.amount ?? "");
                     setCategory(expense.category || "");

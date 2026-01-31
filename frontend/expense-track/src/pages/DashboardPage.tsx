@@ -45,7 +45,7 @@ export default function DashboardPage() {
         if (!resData.ok) {
           throw new Error(data.error || data.message || "Fetch Failed")
         }
-        setExpenses(data.gastos)
+        setExpenses(data.data)
         
       } catch (err: any) {
         alert(err.message || "Error al obtener los datos")
@@ -66,7 +66,7 @@ export default function DashboardPage() {
       if (!resData.ok) {
         throw new Error(data.error || data.message || "Fetch Failed")
       }
-      setExpenses(data.gastos)
+      setExpenses(data.data)
     } catch (err: any) {
       console.error("Refresh failed:", err)
     }

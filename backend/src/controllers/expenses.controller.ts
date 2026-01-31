@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth";
 import prisma from "../db";
 import {
@@ -6,6 +6,15 @@ import {
   create_expense_schema,
   create_modify_schema,
 } from "../schemas/expense";
+
+function serializeExpense(e: any) {
+  const amount =
+    e?.amount && typeof e.amount === "object" && typeof e.amount.toNumber === "function"
+      ? e.amount.toNumber()
+      : e.amount;
+
+  return { ...e, amount };
+}
 
 export async function list(req: AuthRequest, res: Response) {
   const dataFilterZod = expenses_query_schema.parse(req.query);
@@ -16,7 +25,7 @@ export async function list(req: AuthRequest, res: Response) {
     orderBy: { createdAt: "desc" },
   });
 
-  return res.status(200).json({ data: gastos });
+  return res.status(200).json({ data: gastos.map(serializeExpense) });
 }
 
 export async function create(req: AuthRequest, res: Response) {
@@ -33,7 +42,7 @@ export async function create(req: AuthRequest, res: Response) {
   });
 
   return res.status(201).json({
-    data: newExpense,
+    data: serializeExpense(newExpense),
     message: "Expense created",
   });
 }
@@ -56,7 +65,6 @@ export async function update(req: AuthRequest, res: Response) {
   const { id } = req.params;
   const dataZod = create_modify_schema.parse(req.body);
 
-  // Verificar ownership
   const existingExpense = await prisma.expense.findFirst({
     where: { id, userId: req.userId },
     select: { id: true },
@@ -77,7 +85,7 @@ export async function update(req: AuthRequest, res: Response) {
   });
 
   return res.status(200).json({
-    data: updated,
+    data: serializeExpense(updated),
     message: "Expense updated",
   });
 }
@@ -93,5 +101,5 @@ export async function getOne(req: AuthRequest, res: Response) {
     return res.status(404).json({ error: "Expense not found" });
   }
 
-  return res.status(200).json({ data: specificExpense });
+  return res.status(200).json({ data: serializeExpense(specificExpense) });
 }

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const create_expense_schema = z.object({
   title: z.string().min(1, "title is required"),
-  amount: z.number().positive("amount must be greather tahn 0"),
+  amount: z.coerce.number().positive("amount must be greather than 0"),
   category: z.string().optional(),
   info: z.string().optional(),
 });

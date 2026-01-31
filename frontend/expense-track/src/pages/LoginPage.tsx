@@ -33,12 +33,12 @@ export default function LoginPage() {
                 throw new Error(data.error || data.message || "Login Failed")
             }
 
-            // Actualizar el contexto con el usuario (el backend devuelve { id, email, name })
-            if (data.id && data.email && data.name) {
+            // Actualizar el contexto con el usuario (el backend devuelve { data: { id, email, name }, message })
+            if (data.data && data.data.id && data.data.email && data.data.name) {
                 setUser({
-                    id: data.id,
-                    email: data.email,
-                    name: data.name
+                    id: data.data.id,
+                    email: data.data.email,
+                    name: data.data.name
                 });
             }
 

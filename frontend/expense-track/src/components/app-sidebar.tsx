@@ -2,16 +2,14 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
+  ChartColumnIncreasing,
   Command,
-  Frame,
+  CreditCard,
+  FolderKanban,
   LifeBuoy,
-  Map,
-  PieChart,
+  PlusCircle,
   Send,
-  Settings2,
-  SquareTerminal,
+  Wallet,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -30,94 +28,42 @@ import {
 import { useAuthContext } from "@/context/auth.context"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Overview",
+      url: "#overview",
+      icon: ChartColumnIncreasing,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Resumen",
+          url: "#summary",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Actividad",
+          url: "#activity",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      title: "Transactions",
+      url: "#transactions",
+      icon: Wallet,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "Todos los movimientos",
+          url: "#transactions",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Actions",
+      url: "#actions",
+      icon: PlusCircle,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Registrar gasto",
+          url: "#actions",
         },
       ],
     },
@@ -136,19 +82,14 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Dashboard",
+      url: "#overview",
+      icon: FolderKanban,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Expenses",
+      url: "#transactions",
+      icon: CreditCard,
     },
   ],
 }
@@ -167,8 +108,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.name}</span>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate font-medium">Expense Track</span>
+                  <span className="truncate text-xs">{user?.email ?? "Workspace"}</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -181,7 +122,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: user?.name ?? "User",
+            email: user?.email ?? "user@example.com",
+            avatar: "",
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   )

@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label"
 import React from "react"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
+import { X } from "lucide-react"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -103,14 +104,16 @@ export function EditPage({ onClose, id, onSaved }: AddPageProps) {
     return (
         <>
             <style>{styles}</style>
-            <Card className="w-100 max-w-sm border-none shadow-lg">
+            <Card className="w-full border-none py-5 shadow-xl">
             <CardHeader>
                 <CardTitle>{id ? "Edit Transaction" : "Add Transaction"}</CardTitle>
                 <CardDescription>
                     Agrega una nueva transaccion a tu registro
                 </CardDescription>
                 <CardAction>
-                    <Button onClick={onClose} variant="ghost">X</Button>
+                    <Button onClick={onClose} variant="ghost" size="icon-sm" className="rounded-full">
+                        <X className="size-4" />
+                    </Button>
                 </CardAction>
             </CardHeader>
             <CardContent>

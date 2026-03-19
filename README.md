@@ -116,6 +116,16 @@ Backend: http://localhost:3000
 
 La sesión se maneja con cookie token (HTTP-only). En el frontend se envía con `credentials: "include"`.
 
+## 🚀 Run locally
+
+1. Clonar el repo
+2. Crear `.env` y `.env.test`
+3. Levantar PostgreSQL (Docker)
+4. Ejecutar migraciones
+5. Correr tests
+6. Iniciar servidor
+
+
 ## 🧪 Tests (Integration)
 
 Este proyecto incluye **tests de integración** para validar el flujo real de la API (**Auth + Expenses**) usando **Vitest + Supertest** y una **base de datos separada para pruebas**.
